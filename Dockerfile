@@ -1,5 +1,5 @@
 FROM ubuntu:18.04
-LABEL Maintainer = "Nicolas MICHEL <nicolas@vpackets.net>"
+LABEL Maintainer = "Mario Zulmin <mario.zulmin@gmail.com>"
 
 # Variable Definition
 ENV ANSIBLE_VERSION "2.10.7"
@@ -9,13 +9,13 @@ ENV TERRAFORM_VERSION "0.14.8"
 ENV POWERSHELL_VERSION "7.1.3"
 
 # Creating Home Directory
-WORKDIR /home/nmichel
-RUN mkdir -p /home/nmichel/ansible
-RUN mkdir -p /home/nmichel/code
-RUN mkdir -p /home/nmichel/lab-images
+WORKDIR /home/mzulmin
+RUN mkdir -p /home/mzulmin/ansible
+RUN mkdir -p /home/mzulmin/code
+RUN mkdir -p /home/mzulmin/lab-images
 
 # Copy requirement file (PIP Libraries)
-COPY requirements.txt /home/nmichel/requirements.txt
+COPY requirements.txt /home/mzulmin/requirements.txt
 
 # Copy Ansible Config 
 COPY Ansible/ansible.cfg /etc/ansible/ansible.cfg
@@ -133,20 +133,20 @@ RUN pip3 install -q ansible==$ANSIBLE_VERSION
 RUN pip3 install -r requirements.txt
 RUN pip3 install pyATS[library]
 
-# Add user nmichel
-RUN useradd -ms /bin/zsh nmichel
-RUN usermod -a -G sudo,nmichel nmichel
+# Add user mzulmin
+RUN useradd -ms /bin/zsh mzulmin
+RUN usermod -a -G sudo,mzulmin mzulmin
 
 # Copy Oh-My_ZSH Setting 
-COPY .zshrc /home/nmichel/.zshrc
-ADD .oh-my-zsh /home/nmichel/.oh-my-zsh
-RUN  chown -R nmichel:nmichel /home/nmichel
+COPY .zshrc /home/mzulmin/.zshrc
+ADD .oh-my-zsh /home/mzulmin/.oh-my-zsh
+RUN  chown -R mzulmin:mzulmin /home/mzulmin
 #RUN git clone https://github.com/zsh-users/zsh-autosuggestions.git $ZSH_CUSTOM/plugins/zsh-autosuggestions
 #RUN git clone https://github.com/zsh-users/zsh-syntax-highlighting.git $ZSH_CUSTOM/plugins/zsh-syntax-highlighting
 
 # Install OVF Tools
-COPY system/ovftools/VMware-ovftool-4.4.0-16360108-lin.x86_64.bundle /home/nmichel/VMware-ovftool-4.4.0-16360108-lin.x86_64.bundle
-RUN /bin/bash /home/nmichel/VMware-ovftool-4.4.0-16360108-lin.x86_64.bundle --eulas-agreed --required --console
+COPY system/ovftools/VMware-ovftool-4.4.0-16360108-lin.x86_64.bundle /home/mzulmin/VMware-ovftool-4.4.0-16360108-lin.x86_64.bundle
+RUN /bin/bash /home/mzulmin/VMware-ovftool-4.4.0-16360108-lin.x86_64.bundle --eulas-agreed --required --console
 
 
 # Cleanup
