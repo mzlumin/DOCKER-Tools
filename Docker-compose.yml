@@ -9,6 +9,7 @@ services:
    volumes: 
     - /Users/mariozulmin/Library/Mobile Documents/com~apple~CloudDocs/github/DOCKER-Tools/Users/mariozulmin/code/:/home/mzulmin/code/
     - /Users/mariozulmin/Library/Mobile Documents/com~apple~CloudDocs/github/DOCKER-Tools/Ansible/:/home/mzulmin/ansible
+    - /Users/mariozulmin/Images/:/home/mzulmin/lab-images
    hostname: vpackets-tools
   
 
