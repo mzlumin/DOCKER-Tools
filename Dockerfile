@@ -7,12 +7,14 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV PACKER_VERSION "1.7.0"
 ENV TERRAFORM_VERSION "0.14.8"
 ENV POWERSHELL_VERSION "7.1.3"
+ENV BAT_VERSION "0.18.1"
 
 # Creating Home Directory
 WORKDIR /home/mzulmin
 RUN mkdir -p /home/mzulmin/ansible
 RUN mkdir -p /home/mzulmin/code
 RUN mkdir -p /home/mzulmin/lab-images
+RUN mkdir -p /home/mzulmin/.fonts
 
 # Copy requirement file (PIP Libraries)
 COPY requirements.txt /home/mzulmin/requirements.txt
@@ -99,12 +101,18 @@ RUN  apt-get -y update && \
   wget \
   tree \
   zsh \
+  fonts-font-awesome \
   zsh-syntax-highlighting
 
 # Install Powershell
 RUN wget https://github.com/PowerShell/PowerShell/releases/download/v${POWERSHELL_VERSION}/powershell_${POWERSHELL_VERSION}-1.ubuntu.18.04_amd64.deb
 RUN dpkg -i powershell_${POWERSHELL_VERSION}-1.ubuntu.18.04_amd64.deb
 RUN rm powershell_${POWERSHELL_VERSION}-1.ubuntu.18.04_amd64.deb
+
+#Install bat
+RUN wget https://github.com/sharkdp/bat/releases/download/v${BAT_VERSION}/bat_${BAT_VERSION}_amd64.deb
+RUN dpkg -i bat_${BAT_VERSION}_amd64.deb
+RUN rm bat_${BAT_VERSION}_amd64.deb
 
 # Install PowerCLI
 #RUN pwsh -Command Install-Module VMware.PowerCLI -Force -Verbose
@@ -139,10 +147,27 @@ RUN usermod -a -G sudo,mzulmin mzulmin
 
 # Copy Oh-My_ZSH Setting 
 COPY .zshrc /home/mzulmin/.zshrc
+COPY .p10k.zsh /home/mzulmin/.p10k.zsh
 ADD .oh-my-zsh /home/mzulmin/.oh-my-zsh
+ADD powerlevel10k /home/mzulmin/powerlevel10k
 RUN  chown -R mzulmin:mzulmin /home/mzulmin
-#RUN git clone https://github.com/zsh-users/zsh-autosuggestions.git $ZSH_CUSTOM/plugins/zsh-autosuggestions
+RUN git clone https://github.com/zsh-users/zsh-autosuggestions.git .oh-my-zsh/plugins/zsh-autosuggestions
 #RUN git clone https://github.com/zsh-users/zsh-syntax-highlighting.git $ZSH_CUSTOM/plugins/zsh-syntax-highlighting
+#RUN git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
+#RUN git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/powerlevel10k
+RUN git clone --depth 1 https://github.com/junegunn/fzf.git /home/mzulmin/.fzf
+RUN /home/mzulmin/.fzf/install
+COPY .fzf.zsh /home/mzulmin/.fzf.zsh
+
+# Copy Fonts
+ADD .fonts /home/mzulmin/.fonts
+
+# refresh system font cache
+RUN fc-cache -f -v
+
+# refresh matplotlib font cache
+RUN rm -fr ~/.cache/matplotlib
+
 
 # Install OVF Tools
 COPY system/ovftools/VMware-ovftool-4.4.0-16360108-lin.x86_64.bundle /home/mzulmin/VMware-ovftool-4.4.0-16360108-lin.x86_64.bundle
