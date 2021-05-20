@@ -1,8 +1,8 @@
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 LABEL Maintainer = "Mario Zulmin <mario.zulmin@gmail.com>"
 
 # Variable Definition
-ENV ANSIBLE_VERSION "2.10.7"
+ENV ANSIBLE_VERSION "4.0.0"
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PACKER_VERSION "1.7.0"
 ENV TERRAFORM_VERSION "0.14.8"
@@ -18,6 +18,7 @@ RUN mkdir -p /home/mzulmin/.fonts
 
 # Copy requirement file (PIP Libraries)
 COPY requirements.txt /home/mzulmin/requirements.txt
+
 
 # Copy Ansible Config 
 COPY Ansible/ansible.cfg /etc/ansible/ansible.cfg
@@ -69,14 +70,16 @@ RUN  apt-get -y update && \
   openssh-server \
   openssl \
   packer \
+  pkg-config  \
+  libcairo2-dev  \
   p0f \
-  python-pip \
-  python-scapy \
+  python3-pip \
+  python3-scapy \
   python3-dev \
   python3-distutils \
   python3-pip \
   python3-scapy \
-  python3.7 \
+  #python3.7 \
   python3.8 \
   rsync \
   snmp \ 
@@ -105,9 +108,9 @@ RUN  apt-get -y update && \
   zsh-syntax-highlighting
 
 # Install Powershell
-RUN wget https://github.com/PowerShell/PowerShell/releases/download/v${POWERSHELL_VERSION}/powershell_${POWERSHELL_VERSION}-1.ubuntu.18.04_amd64.deb
-RUN dpkg -i powershell_${POWERSHELL_VERSION}-1.ubuntu.18.04_amd64.deb
-RUN rm powershell_${POWERSHELL_VERSION}-1.ubuntu.18.04_amd64.deb
+RUN wget https://github.com/PowerShell/PowerShell/releases/download/v${POWERSHELL_VERSION}/powershell_${POWERSHELL_VERSION}-1.ubuntu.20.04_amd64.deb
+RUN dpkg -i powershell_${POWERSHELL_VERSION}-1.ubuntu.20.04_amd64.deb
+RUN rm powershell_${POWERSHELL_VERSION}-1.ubuntu.20.04_amd64.deb
 
 #Install bat
 RUN wget https://github.com/sharkdp/bat/releases/download/v${BAT_VERSION}/bat_${BAT_VERSION}_amd64.deb
@@ -119,7 +122,7 @@ RUN rm bat_${BAT_VERSION}_amd64.deb
 RUN pwsh  -Command Install-Module -Name VMware.PowerCLI -Scope AllUsers -Force -Verbose
 
 # Install NodeJS
-RUN curl -sL https://deb.nodesource.com/setup_15.x | sudo -E bash -
+RUN curl -fsSL https://deb.nodesource.com/setup_15.x | sudo -E bash -
 RUN apt-get install -y nodejs
 
 # Install Oh-My-ZSH
@@ -134,12 +137,15 @@ RUN mv packer /usr/local/bin
 RUN wget https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip
 RUN unzip terraform_${TERRAFORM_VERSION}_linux_amd64.zip -d /usr/local/bin/
 
+#### TEMP ### 
+#COPY requirements.txt /home/mzulmin/requirements.txt
+
 # Install Pip requirements
 RUN pip3 install -q --upgrade pip
 RUN pip3 install --upgrade setuptools
-RUN pip3 install -q ansible==$ANSIBLE_VERSION
+RUN pip3 install -q ansible
 RUN pip3 install -r requirements.txt
-RUN pip3 install pyATS[library]
+RUN pip3 install --ignore-installed pyATS[library] 
 
 # Add user mzulmin
 RUN useradd -ms /bin/zsh mzulmin
@@ -152,9 +158,6 @@ ADD .oh-my-zsh /home/mzulmin/.oh-my-zsh
 ADD powerlevel10k /home/mzulmin/powerlevel10k
 RUN  chown -R mzulmin:mzulmin /home/mzulmin
 RUN git clone https://github.com/zsh-users/zsh-autosuggestions.git .oh-my-zsh/plugins/zsh-autosuggestions
-#RUN git clone https://github.com/zsh-users/zsh-syntax-highlighting.git $ZSH_CUSTOM/plugins/zsh-syntax-highlighting
-#RUN git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
-#RUN git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/powerlevel10k
 RUN git clone --depth 1 https://github.com/junegunn/fzf.git /home/mzulmin/.fzf
 RUN /home/mzulmin/.fzf/install
 COPY .fzf.zsh /home/mzulmin/.fzf.zsh

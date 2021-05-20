@@ -12,6 +12,9 @@ services:
     - /Users/mariozulmin/Images/:/home/mzulmin/lab-images
     
    hostname: vpackets-tools
+
+   # Needed as my MAC does not support pyvmomi over bridged Network for some reason.
+   network_mode: "host"
   
 
 
