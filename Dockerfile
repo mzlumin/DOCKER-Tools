@@ -182,7 +182,7 @@ COPY Ansible/vSAN-Management-API/vsanmgmtObjects.py /usr/lib/python3.8/
 COPY Ansible/vSAN-Management-API/vsanapiutils.py /usr/lib/python3.8/
 
 # Ansible for NSX-T
-RUN git clone https://github.com/vmware/ansible-for-nsxt.git
+RUN ansible-galaxy collection install git+https://github.com/vmware/ansible-for-nsxt.git
 
 # Run after dependencies
 RUN pip install --upgrade git+https://github.com/vmware/vsphere-automation-sdk-python.git
