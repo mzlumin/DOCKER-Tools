@@ -15,6 +15,9 @@ services:
 
    # Needed as my MAC does not support pyvmomi over bridged Network for some reason.
    network_mode: "host"
+   dns: 
+    - 10.0.0.202
+
   
 
 

@@ -89,3 +89,4 @@ wcwidth==0.2.5
 xmltodict==0.12.0
 yamllint==1.26.1
 yarl==1.6.3
+jmespath==0.10.0

@@ -176,6 +176,16 @@ RUN rm -fr ~/.cache/matplotlib
 COPY system/ovftools/VMware-ovftool-4.4.0-16360108-lin.x86_64.bundle /home/mzulmin/VMware-ovftool-4.4.0-16360108-lin.x86_64.bundle
 RUN /bin/bash /home/mzulmin/VMware-ovftool-4.4.0-16360108-lin.x86_64.bundle --eulas-agreed --required --console
 
+# Add vSAN Python API modules - must be done after pyVmomi installation 
+# Source https://code.vmware.com/apis/964/vsan
+COPY Ansible/vSAN-Management-API/vsanmgmtObjects.py /usr/lib/python3.8/
+COPY Ansible/vSAN-Management-API/vsanapiutils.py /usr/lib/python3.8/
+
+# Ansible for NSX-T
+RUN git clone https://github.com/vmware/ansible-for-nsxt.git
+
+# Run after dependencies
+RUN pip install --upgrade git+https://github.com/vmware/vsphere-automation-sdk-python.git
 
 # Cleanup
 RUN apt-get clean && \
